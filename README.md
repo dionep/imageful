@@ -39,6 +39,8 @@ Imageful supports to receive image from camera, single & mutliple images from ga
 - InputType.GALLERY_SINGLE
 - InputType.GALLERY_MULTIPLE
 
+ImagesGotCallback returns Image.Local. It is simple sealed class with two data classes: Local and Server.
+
 Also we can handle that permissions is denied:
 ```kotlin
 Imageful.create(
