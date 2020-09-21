@@ -23,8 +23,9 @@ import java.util.*
 
 class Imageful : DialogFragment() {
 
-    private val inputType: InputType? by lazy { arguments?.getParcelable<InputType>(ARG_INPUT_TYPE) }
+    private val inputType: InputType? by lazy { arguments?.getParcelable(ARG_INPUT_TYPE) }
     private var imagesGotCallback: (List<Image.Local>) -> Unit = {}
+    private var permissionsFailureCallback: () -> Unit = {}
 
     private lateinit var cameraPermissionsLauncher: ActivityResultLauncher<Array<String>>
     private lateinit var galleryPermissionsLauncher: ActivityResultLauncher<Array<String>>
@@ -56,6 +57,10 @@ class Imageful : DialogFragment() {
                 registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
                     if (permissions.all { it.value == true })
                         cameraContractLauncher.launch(galleryImageUri)
+                    else {
+                        permissionsFailureCallback.invoke()
+                        dismiss()
+                    }
                 }.apply { cameraPermissionsLauncher = this }
                 // contract
                 registerForActivityResult(ActivityResultContracts.TakePicture()) {
@@ -71,6 +76,10 @@ class Imageful : DialogFragment() {
                 registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
                     if (permissions.all { it.value == true })
                         galleryContractLauncher.launch(GALLERY_INPUT_TYPE)
+                    else {
+                        permissionsFailureCallback.invoke()
+                        dismiss()
+                    }
                 }.apply { galleryPermissionsLauncher = this }
                 // contracts
                 when (inputType) {
@@ -110,9 +119,11 @@ class Imageful : DialogFragment() {
     companion object {
         fun create(
             inputType: InputType,
-            imagesGotCallback: (List<Image.Local>) -> Unit = {}
+            imagesGotCallback: (List<Image.Local>) -> Unit = {},
+            permissionsFailureCallback: () -> Unit = {}
         ) = Imageful().apply {
             this.imagesGotCallback = imagesGotCallback
+            this.permissionsFailureCallback = permissionsFailureCallback
             arguments = bundleOf(ARG_INPUT_TYPE to inputType)
         }
 

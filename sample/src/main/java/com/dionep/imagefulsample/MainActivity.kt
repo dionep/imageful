@@ -15,19 +15,28 @@ class MainActivity : AppCompatActivity() {
         btn_from_camera.setOnClickListener {
             Imageful.create(
                 inputType = Imageful.InputType.CAMERA,
-                imagesGotCallback = { onImageGot(it) }
+                imagesGotCallback = { onImageGot(it) },
+                permissionsFailureCallback = {
+                    Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
+                }
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_single.setOnClickListener {
             Imageful.create(
                 inputType = Imageful.InputType.GALLERY_SINGLE,
-                imagesGotCallback = { onImageGot(it) }
+                imagesGotCallback = { onImageGot(it) },
+                permissionsFailureCallback = {
+                    Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
+                }
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_multi.setOnClickListener {
             Imageful.create(
                 inputType = Imageful.InputType.GALLERY_MULTIPLE,
-                imagesGotCallback = { onImageGot(it) }
+                imagesGotCallback = { onImageGot(it) },
+                permissionsFailureCallback = {
+                    Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
+                }
             ).show(supportFragmentManager, null)
         }
 
