@@ -22,7 +22,7 @@ import java.util.*
  * tg: dima2828
  */
 
-class Imageful : DialogFragment() {
+class ImagesGetter : DialogFragment() {
 
     private val inputType: InputType? by lazy { arguments?.getParcelable(ARG_INPUT_TYPE) }
     private var imagesGotCallback: (List<Image.Local>) -> Unit = {}
@@ -112,7 +112,7 @@ class Imageful : DialogFragment() {
         fun create(
             inputType: InputType,
             imagesGotCallback: (List<Image.Local>) -> Unit = {}
-        ) = Imageful().apply {
+        ) = ImagesGetter().apply {
             this.imagesGotCallback = imagesGotCallback
             arguments = bundleOf(ARG_INPUT_TYPE to inputType)
         }
