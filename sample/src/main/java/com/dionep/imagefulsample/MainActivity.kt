@@ -1,9 +1,9 @@
 package com.dionep.imagefulsample
 
+import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.dionep.imageful.Image
 import com.dionep.imageful.Imageful
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -18,7 +18,8 @@ class MainActivity : AppCompatActivity() {
                 imagesGotCallback = { onImageGot(it) },
                 permissionsFailureCallback = {
                     Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
-                }
+                },
+                uriMapper = { Image(it) }
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_single.setOnClickListener {
@@ -27,7 +28,8 @@ class MainActivity : AppCompatActivity() {
                 imagesGotCallback = { onImageGot(it) },
                 permissionsFailureCallback = {
                     Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
-                }
+                },
+                uriMapper = { Image(it) }
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_multi.setOnClickListener {
@@ -36,15 +38,20 @@ class MainActivity : AppCompatActivity() {
                 imagesGotCallback = { onImageGot(it) },
                 permissionsFailureCallback = {
                     Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
-                }
+                },
+                uriMapper = { Image(it) }
             ).show(supportFragmentManager, null)
         }
 
     }
 
-    private fun onImageGot(images: List<Image.Local>) {
+    private fun onImageGot(images: List<Image>) {
         iv_image.setImageURI(images.first().uri)
         Toast.makeText(applicationContext, "Received ${images.size} images", Toast.LENGTH_LONG).show()
     }
+
+    data class Image(
+        val uri: Uri
+    )
 
 }

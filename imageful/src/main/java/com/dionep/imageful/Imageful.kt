@@ -21,10 +21,10 @@ import java.util.*
  * tg: dima2828
  */
 
-class Imageful : DialogFragment() {
+class Imageful <T> : DialogFragment() {
 
     private val inputType: InputType? by lazy { arguments?.getParcelable(ARG_INPUT_TYPE) }
-    private var imagesGotCallback: (List<Image.Local>) -> Unit = {}
+    private var imagesGotCallback: (List<T>) -> Unit = {}
     private var permissionsFailureCallback: () -> Unit = {}
 
     private lateinit var cameraPermissionsLauncher: ActivityResultLauncher<Array<String>>
@@ -33,6 +33,7 @@ class Imageful : DialogFragment() {
     private lateinit var galleryContractLauncher: ActivityResultLauncher<String>
 
     private val galleryImageUri by lazy { createGalleryImageUri() }
+    private lateinit var uriMapper: (Uri) -> T
 
     private val cameraPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
     private val galleryPermissions = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -66,7 +67,7 @@ class Imageful : DialogFragment() {
                 registerForActivityResult(ActivityResultContracts.TakePicture()) {
                     if (it && galleryImageUri != null)
                         imagesGotCallback.invoke(
-                            listOf(Image.Local(galleryImageUri!!))
+                            listOf(uriMapper.invoke(galleryImageUri!!))
                         )
                     dismiss()
                 }.apply { cameraContractLauncher = this }
@@ -85,20 +86,19 @@ class Imageful : DialogFragment() {
                 when (inputType) {
                     InputType.GALLERY_MULTIPLE -> {
                         registerForActivityResult(ActivityResultContracts.GetMultipleContents()) { uris: List<Uri?> ->
-                            uris.filterNotNull().map { uri ->
-                                Image.Local(uri)
-                            }.apply {
-                                if (!isNullOrEmpty())
-                                    imagesGotCallback.invoke(this)
-                                dismiss()
-                            }
+                            uris.filterNotNull()
+                                .apply {
+                                    if (!isNullOrEmpty())
+                                        imagesGotCallback.invoke(this.map { uriMapper.invoke(it) })
+                                    dismiss()
+                                }
                         }.apply { galleryContractLauncher = this }
                     }
                     InputType.GALLERY_SINGLE -> {
                         registerForActivityResult(ActivityResultContracts.GetContent()) { uri: Uri? ->
                             if (uri != null)
                                 imagesGotCallback.invoke(
-                                    listOf(Image.Local(uri))
+                                    listOf(uriMapper.invoke(uri))
                                 )
                             dismiss()
                         }.apply { galleryContractLauncher = this }
@@ -117,12 +117,14 @@ class Imageful : DialogFragment() {
         )
 
     companion object {
-        fun create(
+        fun <T> create(
             inputType: InputType,
-            imagesGotCallback: (List<Image.Local>) -> Unit = {},
+            imagesGotCallback: (List<T>) -> Unit = {},
+            uriMapper: (Uri) -> T,
             permissionsFailureCallback: () -> Unit = {}
-        ) = Imageful().apply {
+        ) = Imageful<T>().apply {
             this.imagesGotCallback = imagesGotCallback
+            this.uriMapper = uriMapper
             this.permissionsFailureCallback = permissionsFailureCallback
             arguments = bundleOf(ARG_INPUT_TYPE to inputType)
         }
