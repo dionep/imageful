@@ -12,7 +12,6 @@ import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
 import androidx.fragment.app.DialogFragment
-import com.dionep.getimagefragment.Image
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
@@ -24,7 +23,7 @@ import java.util.*
 
 class ImagesGetter : DialogFragment() {
 
-    private val inputType: InputType? by lazy { arguments?.getParcelable(ARG_INPUT_TYPE) }
+    private val inputType: InputType? by lazy { arguments?.getParcelable<InputType>(ARG_INPUT_TYPE) }
     private var imagesGotCallback: (List<Image.Local>) -> Unit = {}
 
     private lateinit var cameraPermissionsLauncher: ActivityResultLauncher<Array<String>>

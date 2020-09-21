@@ -1,4 +1,4 @@
-package com.dionep.getimagefragment
+package com.dionep.imagegetter
 
 import android.net.Uri
 import android.os.Parcelable
