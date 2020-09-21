@@ -14,7 +14,7 @@ allprojects {
 Add the dependency:
 ```groovy
 dependencies {
-  implementation 'com.github.dionep:imageful:0.2.0'
+  implementation 'com.github.dionep:imageful:0.2.1'
 }
 ```
 
