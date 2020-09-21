@@ -1,0 +1,3 @@
+include ':imageful'
+include ':app'
+rootProject.name = "imageful"
