@@ -30,7 +30,8 @@ Imageful extends DialogFragment, thereby it works like:
 ```kotlin
 Imageful.create(
   inputType = Imageful.InputType.CAMERA,
-  imagesGotCallback = { onImageGot(it) }
+  imagesGotCallback = { image -> onImageGot(image) },
+  uriMapper = { Image(it) }
 ).show(supportFragmentManager, SomeTag)
 ```
 
@@ -39,13 +40,14 @@ Imageful supports to receive image from camera, single & mutliple images from ga
 - InputType.GALLERY_SINGLE
 - InputType.GALLERY_MULTIPLE
 
-ImagesGotCallback returns Image.Local. It is simple sealed class with two data classes: Local and Server.
+UriMapper used for uri transormation to model.
 
 Also we can handle that permissions is denied:
 ```kotlin
 Imageful.create(
   inputType = Imageful.InputType.CAMERA,
-  imagesGotCallback = { onImageGot(it) },
+  imagesGotCallback = { image -> onImageGot(image) },
+  uriMapper = { Image(it) },
   permissionsFailureCallback = {
     Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
   }
