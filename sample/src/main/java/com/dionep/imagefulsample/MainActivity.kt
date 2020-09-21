@@ -1,4 +1,4 @@
-package com.dionep.imageful_sample
+package com.dionep.imagefulsample
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
