@@ -3,8 +3,8 @@ package com.dionep.imagefulsample
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import com.dionep.imagegetter.Image
-import com.dionep.imagegetter.ImagesGetter
+import com.dionep.imageful.Image
+import com.dionep.imageful.Imageful
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -13,20 +13,20 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         btn_from_camera.setOnClickListener {
-            ImagesGetter.create(
-                inputType = ImagesGetter.InputType.CAMERA,
+            Imageful.create(
+                inputType = Imageful.InputType.CAMERA,
                 imagesGotCallback = { onImageGot(it) }
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_single.setOnClickListener {
-            ImagesGetter.create(
-                inputType = ImagesGetter.InputType.GALLERY_SINGLE,
+            Imageful.create(
+                inputType = Imageful.InputType.GALLERY_SINGLE,
                 imagesGotCallback = { onImageGot(it) }
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_multi.setOnClickListener {
-            ImagesGetter.create(
-                inputType = ImagesGetter.InputType.GALLERY_MULTIPLE,
+            Imageful.create(
+                inputType = Imageful.InputType.GALLERY_MULTIPLE,
                 imagesGotCallback = { onImageGot(it) }
             ).show(supportFragmentManager, null)
         }

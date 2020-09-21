@@ -1,4 +1,4 @@
-package com.dionep.imagegetter
+package com.dionep.imageful
 
 import android.Manifest
 import android.app.Dialog
@@ -21,7 +21,7 @@ import java.util.*
  * tg: dima2828
  */
 
-class ImagesGetter : DialogFragment() {
+class Imageful : DialogFragment() {
 
     private val inputType: InputType? by lazy { arguments?.getParcelable<InputType>(ARG_INPUT_TYPE) }
     private var imagesGotCallback: (List<Image.Local>) -> Unit = {}
@@ -111,7 +111,7 @@ class ImagesGetter : DialogFragment() {
         fun create(
             inputType: InputType,
             imagesGotCallback: (List<Image.Local>) -> Unit = {}
-        ) = ImagesGetter().apply {
+        ) = Imageful().apply {
             this.imagesGotCallback = imagesGotCallback
             arguments = bundleOf(ARG_INPUT_TYPE to inputType)
         }
