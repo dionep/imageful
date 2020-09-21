@@ -1,4 +1,4 @@
-package com.dionep.imageful
+package com.dionep.imagegetter
 
 import android.Manifest
 import android.app.Dialog

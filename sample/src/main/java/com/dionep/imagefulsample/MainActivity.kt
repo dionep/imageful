@@ -4,7 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.dionep.getimagefragment.Image
-import com.dionep.imageful.ImagesGetter
+import com.dionep.imagegetter.ImagesGetter
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
