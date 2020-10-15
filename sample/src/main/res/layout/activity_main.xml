@@ -10,8 +10,17 @@
 
     <ImageView
         android:id="@+id/iv_image"
+        android:src="@drawable/ic_launcher_foreground"
+        android:layout_weight="1"
         android:layout_width="match_parent"
-        android:layout_height="500dp"/>
+        android:layout_height="0dp"/>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/btn_save_to_gallery"
+        android:text="SAVE TO GALLERY"
+        android:layout_marginHorizontal="16dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"/>
 
     <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/btn_from_camera"
@@ -31,6 +40,7 @@
         android:id="@+id/btn_from_gallery_multi"
         android:text="GET MULTIPLE FROM GALLERY"
         android:layout_marginHorizontal="16dp"
+        android:layout_marginBottom="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 

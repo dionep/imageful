@@ -4,6 +4,7 @@ import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import com.dionep.imageful.ImageSaver
 import com.dionep.imageful.Imageful
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -12,6 +13,21 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+
+        btn_save_to_gallery.setOnClickListener {
+            ImageSaver.create(
+                imageUrl = "SOME URL",
+                permissionsFailureCallback = {
+                    Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
+                },
+                saveSuccess = {
+                    Toast.makeText(applicationContext, "Success", Toast.LENGTH_LONG).show()
+                },
+                saveFailure = {
+                    Toast.makeText(applicationContext, "Fail", Toast.LENGTH_LONG).show()
+                }
+            ).show(supportFragmentManager, null)
+        }
         btn_from_camera.setOnClickListener {
             Imageful.create(
                 inputType = Imageful.InputType.CAMERA,
