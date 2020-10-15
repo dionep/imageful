@@ -20,10 +20,10 @@ class MainActivity : AppCompatActivity() {
                 permissionsFailureCallback = {
                     Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
                 },
-                successSaveCallback = {
+                saveSuccess = {
                     Toast.makeText(applicationContext, "Success", Toast.LENGTH_LONG).show()
                 },
-                failSaveCallback = {
+                saveFailure = {
                     Toast.makeText(applicationContext, "Fail", Toast.LENGTH_LONG).show()
                 }
             ).show(supportFragmentManager, null)

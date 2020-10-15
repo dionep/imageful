@@ -22,8 +22,8 @@ import java.util.*
 class ImageSaver : DialogFragment() {
 
     private var permissionsFailureCallback: () -> Unit = {}
-    private var successSaveCallback: () -> Unit = {}
-    private var failSaveCallback: () -> Unit = {}
+    private var saveSuccess: () -> Unit = {}
+    private var saveFailure: () -> Unit = {}
     private val imageUrl by lazy { arguments?.getString(ARG_IMAGE_URL, "") }
 
     private lateinit var galleryPermissionsLauncher: ActivityResultLauncher<Array<String>>
@@ -74,11 +74,11 @@ class ImageSaver : DialogFragment() {
                                     it?.flush()
                                     it?.close()
                                 }
-                                successSaveCallback.invoke()
+                                saveSuccess.invoke()
                                 dismiss()
                             }
                             override fun onLoadFailed(errorDrawable: Drawable?) {
-                                failSaveCallback.invoke()
+                                saveFailure.invoke()
                                 dismiss()
                             }
                             override fun onLoadCleared(placeholder: Drawable?) {}
@@ -95,13 +95,13 @@ class ImageSaver : DialogFragment() {
         fun create(
             imageUrl: String,
             permissionsFailureCallback: () -> Unit = {},
-            successSaveCallback: () -> Unit = {},
-            failSaveCallback: () -> Unit = {}
+            saveSuccess: () -> Unit = {},
+            saveFailure: () -> Unit = {}
         ) = ImageSaver().apply {
             arguments = bundleOf(ARG_IMAGE_URL to imageUrl)
             this.permissionsFailureCallback = permissionsFailureCallback
-            this.successSaveCallback = successSaveCallback
-            this.failSaveCallback = failSaveCallback
+            this.saveSuccess = saveSuccess
+            this.saveFailure = saveFailure
         }
 
         private const val ARG_IMAGE_URL = "image_url"
