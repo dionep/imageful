@@ -1,5 +1,8 @@
+![Release](https://jitpack.io/v/dionep/imageful.svg)
+
 # Imageful
 This library will help you get images from camera/gallery more simplifier. It requests all permissions you needed to work with camera & gallery.
+Also this library has ImageSaver, which helps to save images to gallery from url.
 
 ## Gradle
 Add it in your root build.gradle at the end of repositories:
@@ -14,11 +17,11 @@ allprojects {
 Add the dependency:
 ```groovy
 dependencies {
-  implementation 'com.github.dionep:imageful:0.2.1'
+  implementation 'com.github.dionep:imageful:0.3.0'
 }
 ```
 
-## How to use?
+## How to use Imageful?
 First, you need to add permission to AndroidManifest.xml:
 ```xml
 <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
@@ -54,4 +57,30 @@ Imageful.create(
 ).show(supportFragmentManager, SomeTag)
 ```
 
-You can see sample in repository.
+## How to use ImageSaver?
+All what you need is to have this permission in AndroidManifest.xml:
+```xml
+  <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+  <uses-permission android:name="android.permission.CAMERA"/>
+  <uses-permission android:name="android.permission.INTERNET"/>
+  <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+  <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
+```
+And call ImageSaver:
+```kotlin
+ImageSaver.create(
+  imageUrl = "https://image.url",
+  permissionsFailureCallback = {
+      Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
+  },
+  saveSuccess = {
+      Toast.makeText(applicationContext, "Success", Toast.LENGTH_LONG).show()
+  },
+  saveFailure = {
+      Toast.makeText(applicationContext, "Fail", Toast.LENGTH_LONG).show()
+  }
+).show(supportFragmentManager, null)
+```
+
+You can see samples in repository.
