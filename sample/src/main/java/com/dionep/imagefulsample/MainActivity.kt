@@ -3,12 +3,14 @@ package com.dionep.imagefulsample
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.widget.Toast
 import com.dionep.imageful.ImageSaver
 import com.dionep.imageful.Imageful
+import com.dionep.imageful.listeners.ResultCallback
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity() {
+class MainActivity : AppCompatActivity(), ResultCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -30,44 +32,29 @@ class MainActivity : AppCompatActivity() {
         }
         btn_from_camera.setOnClickListener {
             Imageful.create(
-                inputType = Imageful.InputType.CAMERA,
-                imagesGotCallback = { onImageGot(it) },
-                permissionsFailureCallback = {
-                    Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
-                },
-                uriMapper = { Image(it) }
+                inputType = Imageful.InputType.CAMERA
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_single.setOnClickListener {
             Imageful.create(
-                inputType = Imageful.InputType.GALLERY_SINGLE,
-                imagesGotCallback = { onImageGot(it) },
-                permissionsFailureCallback = {
-                    Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
-                },
-                uriMapper = { Image(it) }
+                inputType = Imageful.InputType.GALLERY_SINGLE
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_multi.setOnClickListener {
             Imageful.create(
-                inputType = Imageful.InputType.GALLERY_MULTIPLE,
-                imagesGotCallback = { onImageGot(it) },
-                permissionsFailureCallback = {
-                    Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
-                },
-                uriMapper = { Image(it) }
+                inputType = Imageful.InputType.GALLERY_MULTIPLE
             ).show(supportFragmentManager, null)
         }
 
     }
 
-    private fun onImageGot(images: List<Image>) {
-        iv_image.setImageURI(images.first().uri)
-        Toast.makeText(applicationContext, "Received ${images.size} images", Toast.LENGTH_LONG).show()
+    private fun onImageGot(image: Uri) {
+        iv_image.setImageURI(image)
+        Toast.makeText(applicationContext, "Success", Toast.LENGTH_LONG).show()
     }
 
-    data class Image(
-        val uri: Uri
-    )
-
+    override fun success(uri: Uri) {
+        Log.d("rere", uri.toString())
+        onImageGot(uri)
+    }
 }
