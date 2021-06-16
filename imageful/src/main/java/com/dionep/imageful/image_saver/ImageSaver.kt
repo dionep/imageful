@@ -31,8 +31,8 @@ class ImageSaver : DialogFragment() {
     private val resultCallback: ImageSaverResultCallback?
         get() = (parentFragment as? ImageSaverResultCallback) ?: (activity as? ImageSaverResultCallback)
 
-    private lateinit var galleryPermissionsLauncher: ActivityResultLauncher<String>
-    private val galleryPermission = Manifest.permission.READ_EXTERNAL_STORAGE
+    private lateinit var galleryPermissionLauncher: ActivityResultLauncher<String>
+    private val galleryPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
     private var isSettingsOpened = false
 
     override fun onAttach(context: Context) {
@@ -50,7 +50,7 @@ class ImageSaver : DialogFragment() {
             true -> openAppSettings {
                 resultCallback?.onPermissionFailure(it)
             }
-            else -> galleryPermissionsLauncher.launch(galleryPermission)
+            else -> galleryPermissionLauncher.launch(galleryPermission)
         }
     }
 
@@ -62,7 +62,7 @@ class ImageSaver : DialogFragment() {
                 showPermissionsExplainDialog(
                     !shouldShowRequestPermissionRationale(galleryPermission)
                 )
-        }.apply { galleryPermissionsLauncher = this }
+        }.apply { galleryPermissionLauncher = this }
     }
 
     private fun uploadAndSaveImage() {
@@ -80,11 +80,10 @@ class ImageSaver : DialogFragment() {
                         val contentValues = ContentValues().apply {
                             put(MediaStore.MediaColumns.DISPLAY_NAME, displayName)
                             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
-                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q)
                                 put(MediaStore.MediaColumns.RELATIVE_PATH, Environment.DIRECTORY_PICTURES)
-                            } else {
+                            else
                                 put(MediaStore.MediaColumns.DATA, "${Environment.getExternalStorageDirectory().path}/${Environment.DIRECTORY_DCIM}/$displayName")
-                            }
                         }
                         val uri = resolver.insert(
                             MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
@@ -150,7 +149,7 @@ class ImageSaver : DialogFragment() {
             )
         }
 
-        private const val ARG_IMAGE_URL = "image_url"
+        private const val ARG_IMAGE_URL = "arg_image_url"
         private const val ARG_EXPLAINING_MESSAGE = "arg_explaining_message"
         private const val ARG_ALLOW_BTN_TEXT = "arg_allow_btn_text"
         private const val ARG_FORBID_BTN_TEXT = "arg_forbid_btn_text"
