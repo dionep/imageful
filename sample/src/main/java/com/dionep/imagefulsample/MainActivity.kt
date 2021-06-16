@@ -3,14 +3,14 @@ package com.dionep.imagefulsample
 import android.net.Uri
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.widget.Toast
-import com.dionep.imageful.ImageSaver
-import com.dionep.imageful.Imageful
-import com.dionep.imageful.listeners.ResultCallback
+import com.dionep.imageful.image_saver.ImageSaver
+import com.dionep.imageful.image_saver.ImageSaverResultCallback
+import com.dionep.imageful.imageful.Imageful
+import com.dionep.imageful.imageful.ImagefulResultCallback
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), ResultCallback {
+class MainActivity : AppCompatActivity(), ImagefulResultCallback, ImageSaverResultCallback {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -18,43 +18,58 @@ class MainActivity : AppCompatActivity(), ResultCallback {
 
         btn_save_to_gallery.setOnClickListener {
             ImageSaver.create(
-                imageUrl = "SOME URL",
-                permissionsFailureCallback = {
-                    Toast.makeText(applicationContext, "Permissions failure", Toast.LENGTH_LONG).show()
-                },
-                saveSuccess = {
-                    Toast.makeText(applicationContext, "Success", Toast.LENGTH_LONG).show()
-                },
-                saveFailure = {
-                    Toast.makeText(applicationContext, "Fail", Toast.LENGTH_LONG).show()
-                }
+                imageUrl = "https://picsum.photos/200/300",
+                explainingMessageToUser = "Allow access to device memory to save image",
+                allowBtnText = "Allow",
+                forbidBtnText = "Forbid"
             ).show(supportFragmentManager, null)
         }
         btn_from_camera.setOnClickListener {
             Imageful.create(
-                inputType = Imageful.InputType.CAMERA
+                Imageful.InputType.CAMERA
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_single.setOnClickListener {
             Imageful.create(
-                inputType = Imageful.InputType.GALLERY_SINGLE
+                inputType = Imageful.InputType.GALLERY_SINGLE,
+                explainingMessageToUser = "Allow access to device memory to upload photos",
+                allowBtnText = "Allow",
+                forbidBtnText = "Forbid"
             ).show(supportFragmentManager, null)
         }
         btn_from_gallery_multi.setOnClickListener {
             Imageful.create(
-                inputType = Imageful.InputType.GALLERY_MULTIPLE
+                Imageful.InputType.GALLERY_MULTIPLE
             ).show(supportFragmentManager, null)
         }
 
     }
 
-    private fun onImageGot(image: Uri) {
-        iv_image.setImageURI(image)
-        Toast.makeText(applicationContext, "Success", Toast.LENGTH_LONG).show()
+    private fun onImageGot(image: Uri?) {
+        image?.let {
+            iv_image.setImageURI(it)
+            Toast.makeText(applicationContext, "Success", Toast.LENGTH_LONG).show()
+        }
     }
 
-    override fun success(uri: Uri) {
-        Log.d("rere", uri.toString())
+    override fun onImageReceived(uri: Uri) {
         onImageGot(uri)
     }
+
+    override fun onImagesReceived(uris: List<Uri>) {
+        onImageGot(uris.firstOrNull())
+    }
+
+    override fun onPermissionFailure(throwable: Throwable?) {
+        Toast.makeText(applicationContext, "Failure", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun savedSuccess() {
+        Toast.makeText(applicationContext, "Saved successfully", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun savedFailure() {
+        Toast.makeText(applicationContext, "Saved with failure", Toast.LENGTH_SHORT).show()
+    }
+
 }
