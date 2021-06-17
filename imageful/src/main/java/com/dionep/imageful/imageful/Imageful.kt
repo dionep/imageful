@@ -12,29 +12,31 @@ import android.provider.MediaStore
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
+import com.dionep.imageful.BaseDialogFragment
 import com.dionep.imageful.openAppSettings
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
-class Imageful: DialogFragment() {
+class Imageful: BaseDialogFragment() {
 
-    private val resultCallback: ImagefulResultCallback?
-        get() = (parentFragment as? ImagefulResultCallback) ?: (activity as? ImagefulResultCallback)
+    private val resultCallback: ImagefulResultCallbacks?
+        get() = (parentFragment as? ImagefulResultCallbacks) ?: (activity as? ImagefulResultCallbacks)
 
     private val inputType: InputType? by lazy { arguments?.getParcelable(ARG_INPUT_TYPE) }
-    private val explainingMessageToUser: String by lazy { arguments?.getString(ARG_EXPLAINING_MESSAGE) ?: "Allow access to the device memory to get the image" }
+    private val permissionsRequiredExplainingMessageToUser: String by lazy {
+        arguments?.getString(ARG_EXPLAINING_MESSAGE) ?: "Allow access to the device memory to get the image"
+    }
     private val forbidBtnText: String by lazy { arguments?.getString(ARG_FORBID_BTN_TEXT) ?: "Forbid" }
     private val allowBtnText: String by lazy { arguments?.getString(ARG_ALLOW_BTN_TEXT) ?: "Allow" }
 
-    private lateinit var cameraPermissionsLauncher: ActivityResultLauncher<Array<String>>
-    private lateinit var galleryPermissionsLauncher: ActivityResultLauncher<String>
+    private lateinit var cameraPermissionLauncher: ActivityResultLauncher<String>
+    private lateinit var galleryPermissionLauncher: ActivityResultLauncher<String>
     private lateinit var cameraContractLauncher: ActivityResultLauncher<Uri>
     private lateinit var galleryContractLauncher: ActivityResultLauncher<String>
 
     private val galleryImageUri by lazy { createGalleryImageUri() }
 
-    private val cameraPermissions = arrayOf(Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    private val cameraPermission = Manifest.permission.CAMERA
     private val galleryPermission = Manifest.permission.READ_EXTERNAL_STORAGE
     private var isSettingsOpened = false
 
@@ -57,8 +59,8 @@ class Imageful: DialogFragment() {
             }
             else -> {
                 when (inputType) {
-                    InputType.CAMERA -> cameraPermissionsLauncher.launch(cameraPermissions)
-                    else -> galleryPermissionsLauncher.launch(galleryPermission)
+                    InputType.CAMERA -> cameraPermissionLauncher.launch(cameraPermission)
+                    else -> galleryPermissionLauncher.launch(galleryPermission)
                 }
             }
         }
@@ -68,12 +70,12 @@ class Imageful: DialogFragment() {
         when (inputType) {
             InputType.CAMERA -> {
                 // permissions
-                registerForActivityResult(ActivityResultContracts.RequestMultiplePermissions()) { permissions ->
-                    if (permissions.all { it.value == true })
+                registerForActivityResult(ActivityResultContracts.RequestPermission()) { permission ->
+                    if (permission)
                         cameraContractLauncher.launch(galleryImageUri)
                     else
-                        showPermissionsExplainDialog(permissions.all { !shouldShowRequestPermissionRationale(it.key) })
-                }.apply { cameraPermissionsLauncher = this }
+                        showPermissionExplainDialog(permission)
+                }.apply { cameraPermissionLauncher = this }
                 // contract
                 registerForActivityResult(ActivityResultContracts.TakePicture()) {
                     if (it && galleryImageUri != null)
@@ -87,8 +89,8 @@ class Imageful: DialogFragment() {
                     if (permissionAllowed)
                         galleryContractLauncher.launch(GALLERY_INPUT_TYPE)
                     else
-                        showPermissionsExplainDialog(!shouldShowRequestPermissionRationale(galleryPermission))
-                }.apply { galleryPermissionsLauncher = this }
+                        showPermissionExplainDialog(!shouldShowRequestPermissionRationale(galleryPermission))
+                }.apply { galleryPermissionLauncher = this }
                 // contracts
                 when (inputType) {
                     InputType.GALLERY_MULTIPLE -> {
@@ -114,11 +116,11 @@ class Imageful: DialogFragment() {
         }
     }
 
-    private fun showPermissionsExplainDialog(
+    private fun showPermissionExplainDialog(
         isShowRequestPermissionNotRationale: Boolean
     ) {
         with(AlertDialog.Builder(requireContext())) {
-            setMessage(explainingMessageToUser)
+            setMessage(permissionsRequiredExplainingMessageToUser)
             setPositiveButton(allowBtnText) { _, _ ->
                 launchPermissionsLauncher(isShowRequestPermissionNotRationale)
             }
@@ -152,13 +154,13 @@ class Imageful: DialogFragment() {
     companion object {
         fun create(
             inputType: InputType,
-            explainingMessageToUser: String? = null,
+            permissionsRequiredExplainingMessageToUser: String? = null,
             allowBtnText: String? = null,
             forbidBtnText: String? = null
         ) = Imageful().apply {
             arguments = bundleOf(
                 ARG_INPUT_TYPE to inputType,
-                ARG_EXPLAINING_MESSAGE to explainingMessageToUser,
+                ARG_EXPLAINING_MESSAGE to permissionsRequiredExplainingMessageToUser,
                 ARG_FORBID_BTN_TEXT to forbidBtnText,
                 ARG_ALLOW_BTN_TEXT to allowBtnText
             )
