@@ -9,15 +9,19 @@ import android.net.Uri
 import android.os.Bundle
 import android.os.Parcelable
 import android.provider.MediaStore
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import android.widget.ProgressBar
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
-import com.dionep.imageful.BaseDialogFragment
+import androidx.fragment.app.DialogFragment
 import com.dionep.imageful.openAppSettings
 import kotlinx.android.parcel.Parcelize
 import java.util.*
 
-class Imageful: BaseDialogFragment() {
+class Imageful: DialogFragment() {
 
     private val resultCallback: ImagefulResultCallbacks?
         get() = (parentFragment as? ImagefulResultCallbacks) ?: (activity as? ImagefulResultCallbacks)
@@ -43,6 +47,17 @@ class Imageful: BaseDialogFragment() {
     override fun onAttach(context: Context) {
         super.onAttach(context)
         registerActivityResults()
+    }
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ProgressBar(context).apply {
+            setPadding(32, 32, 32, 32)
+            isCancelable = false
+        }
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
@@ -74,7 +89,7 @@ class Imageful: BaseDialogFragment() {
                     if (permission)
                         cameraContractLauncher.launch(galleryImageUri)
                     else
-                        showPermissionExplainDialog(permission)
+                        showPermissionExplainDialog(!shouldShowRequestPermissionRationale(cameraPermission))
                 }.apply { cameraPermissionLauncher = this }
                 // contract
                 registerForActivityResult(ActivityResultContracts.TakePicture()) {
