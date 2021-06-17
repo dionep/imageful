@@ -14,22 +14,22 @@ import android.provider.MediaStore
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.core.os.bundleOf
-import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.CustomTarget
 import com.bumptech.glide.request.transition.Transition
+import com.dionep.imageful.BaseDialogFragment
 import com.dionep.imageful.openAppSettings
 import java.util.*
 
-class ImageSaver : DialogFragment() {
+class ImageSaver : BaseDialogFragment() {
 
     private val imageUrl by lazy { arguments?.getString(ARG_IMAGE_URL, "") }
     private val explainingMessageToUser: String by lazy { arguments?.getString(ARG_EXPLAINING_MESSAGE) ?: "Allow access to the device memory to save the image" }
     private val forbidBtnText: String by lazy { arguments?.getString(ARG_FORBID_BTN_TEXT) ?: "Forbid" }
     private val allowBtnText: String by lazy { arguments?.getString(ARG_ALLOW_BTN_TEXT) ?: "Allow" }
 
-    private val resultCallback: ImageSaverResultCallback?
-        get() = (parentFragment as? ImageSaverResultCallback) ?: (activity as? ImageSaverResultCallback)
+    private val resultCallback: ImageSaverResultCallbacks?
+        get() = (parentFragment as? ImageSaverResultCallbacks) ?: (activity as? ImageSaverResultCallbacks)
 
     private lateinit var galleryPermissionLauncher: ActivityResultLauncher<String>
     private val galleryPermission = Manifest.permission.WRITE_EXTERNAL_STORAGE
@@ -37,11 +37,15 @@ class ImageSaver : DialogFragment() {
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
-        registerActivityResults()
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P)
+            registerActivityResults()
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
-        launchPermissionLauncher()
+        if (Build.VERSION.SDK_INT <= Build.VERSION_CODES.P)
+            launchPermissionLauncher()
+         else
+            uploadAndSaveImage()
         return super.onCreateDialog(savedInstanceState)
     }
 

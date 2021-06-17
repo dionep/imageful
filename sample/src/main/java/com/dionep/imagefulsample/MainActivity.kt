@@ -5,12 +5,12 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import com.dionep.imageful.image_saver.ImageSaver
-import com.dionep.imageful.image_saver.ImageSaverResultCallback
+import com.dionep.imageful.image_saver.ImageSaverResultCallbacks
 import com.dionep.imageful.imageful.Imageful
-import com.dionep.imageful.imageful.ImagefulResultCallback
+import com.dionep.imageful.imageful.ImagefulResultCallbacks
 import kotlinx.android.synthetic.main.activity_main.*
 
-class MainActivity : AppCompatActivity(), ImagefulResultCallback, ImageSaverResultCallback {
+class MainActivity : AppCompatActivity(), ImagefulResultCallbacks, ImageSaverResultCallbacks {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +32,7 @@ class MainActivity : AppCompatActivity(), ImagefulResultCallback, ImageSaverResu
         btn_from_gallery_single.setOnClickListener {
             Imageful.create(
                 inputType = Imageful.InputType.GALLERY_SINGLE,
-                explainingMessageToUser = "Allow access to device memory to upload photos",
+                permissionsRequiredExplainingMessageToUser = "Allow access to device memory to upload photos",
                 allowBtnText = "Allow",
                 forbidBtnText = "Forbid"
             ).show(supportFragmentManager, null)
