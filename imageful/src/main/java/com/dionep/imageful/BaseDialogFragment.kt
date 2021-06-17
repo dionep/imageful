@@ -7,7 +7,7 @@ import android.view.ViewGroup
 import android.widget.ProgressBar
 import androidx.fragment.app.DialogFragment
 
-open class BaseDialogFragment: DialogFragment() {
+internal open class BaseDialogFragment: DialogFragment() {
 
     override fun onCreateView(
         inflater: LayoutInflater,
