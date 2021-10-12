@@ -1,5 +1,8 @@
 ![Release](https://jitpack.io/v/dionep/imageful.svg)
 
+# DEPRECATED
+The library is out of date
+
 # Imageful
 This library will help you get images from camera/gallery more simplifier. It requests all permissions you needed to work with camera & gallery.
 Also this library has ImageSaver, which helps to save images to gallery from url.
